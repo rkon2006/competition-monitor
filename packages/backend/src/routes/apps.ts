@@ -39,7 +39,7 @@ router.post('/', async (req, res, next) => {
       },
     });
 
-    schedulerService.scheduleApp(app);
+    schedulerService.scheduleApp(app.id);
     res.status(201).json(app);
   } catch (err) {
     next(err);
