@@ -6,6 +6,7 @@ import { config } from './config';
 import appsRouter from './routes/apps';
 import { appScreenshotsRouter, screenshotsRouter } from './routes/screenshots';
 import { errorHandler } from './middleware/errorHandler';
+import { screenshotService } from './services/screenshot.service';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -31,6 +32,8 @@ app.get('/api/test', async (_req, res) => {
 
 app.use(errorHandler);
 
-app.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`);
+screenshotService.init().then(() => {
+  app.listen(config.port, () => {
+    console.log(`Server running on port ${config.port}`);
+  });
 });
