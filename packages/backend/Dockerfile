@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-RUN npm ci
+RUN npm install
 RUN npx prisma generate
 
 FROM node:20-slim AS runtime
