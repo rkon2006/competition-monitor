@@ -1,0 +1,27 @@
+.root {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.breadcrumb {
+  margin-bottom: 16px;
+}
+
+.breadcrumbLink {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.headerTitle {
+  margin: 0;
+}
+
+.playLink {
+  font-size: 13px;
+  color: #007bff;
+}

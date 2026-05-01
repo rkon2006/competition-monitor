@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppListPage } from './components/AppListPage';
-import { AppDetailsPage } from './pages/AppDetailsPage';
+import { AppDetailsPage } from './pages/AppDetailsPage/AppDetailsPage';
 
 import './App.css';
 
