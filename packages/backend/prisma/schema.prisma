@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model App {
+  id          String   @id @default(uuid())
+  name        String
+  playUrl     String   @unique @map("play_url")
+  packageName String   @unique @map("package_name")
+  intervalMin Int      @default(60) @map("interval_min")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  screenshots Screenshot[]
+
+  @@map("apps")
+}
+
+model Screenshot {
+  id       String   @id @default(uuid())
+  appId    String   @map("app_id")
+  filePath String   @map("file_path")
+  takenAt  DateTime @default(now()) @map("taken_at")
+
+  app App @relation(fields: [appId], references: [id], onDelete: Cascade)
+
+  @@index([appId, takenAt(sort: Desc)])
+  @@map("screenshots")
+}
+
