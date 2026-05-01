@@ -14,7 +14,6 @@ const createAppSchema = z.object({
     .refine((url) => url.includes('play.google.com/store/apps/details'), {
       message: 'Must be a valid Google Play Store URL',
     }),
-
 });
 
 const updateAppSchema = z.object({
@@ -65,6 +64,29 @@ router.get('/', async (_req, res, next) => {
     }));
 
     res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/apps/:id
+router.get('/:id', async (req, res, next) => {
+  try {
+    const app = await prisma.app.findUnique({
+      where: { id: req.params.id },
+      include: {
+        _count: { select: { screenshots: true } },
+        screenshots: { orderBy: { takenAt: 'desc' }, take: 1 },
+      },
+    });
+
+    if (!app) {
+      res.status(404).json({ error: 'App not found' });
+      return;
+    }
+
+    const { screenshots, ...rest } = app;
+    res.json({ ...rest, latestScreenshot: screenshots[0] ?? null });
   } catch (err) {
     next(err);
   }
