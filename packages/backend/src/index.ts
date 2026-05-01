@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { config } from './config';
 
 import appsRouter from './routes/apps';
+import { appScreenshotsRouter, screenshotsRouter } from './routes/screenshots';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -14,6 +15,10 @@ app.use(express.json());
 
 // apps endpoints
 app.use('/api/apps', appsRouter);
+
+// screenshots endpoints
+app.use('/api/apps/:appId/screenshots', appScreenshotsRouter);
+app.use('/api/screenshots', screenshotsRouter);
 
 app.get('/api/test', async (_req, res) => {
   try {
