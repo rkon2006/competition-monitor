@@ -1,10 +1,9 @@
 import puppeteer, { Browser } from 'puppeteer-core';
 import path from 'path';
 import fs from 'fs';
-import { PrismaClient, App } from '@prisma/client';
+import { App } from '@prisma/client';
 import { config } from '../config';
-
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 
 const EXECUTABLE_PATH =
   process.env.PUPPETEER_EXECUTABLE_PATH ||

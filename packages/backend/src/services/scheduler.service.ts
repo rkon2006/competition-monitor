@@ -1,8 +1,7 @@
 import cron, { ScheduledTask } from 'node-cron';
-import { PrismaClient, App } from '@prisma/client';
+import { App } from '@prisma/client';
 import { screenshotService } from './screenshot.service';
-
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 
 class SchedulerService {
   private jobs: Map<string, ScheduledTask> = new Map();

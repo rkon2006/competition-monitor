@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '@prisma/client';
 import { config } from './config';
+import { prisma } from './lib/prisma';
 
 import appsRouter from './routes/apps';
 import { appScreenshotsRouter, screenshotsRouter } from './routes/screenshots';
@@ -10,8 +10,6 @@ import { screenshotService } from './services/screenshot.service';
 import { schedulerService } from './services/scheduler.service';
 
 const app = express();
-const prisma = new PrismaClient();
-
 app.use(cors({ origin: config.corsOrigin }));
 app.use(express.json());
 
@@ -32,6 +30,13 @@ app.get('/api/test', async (_req, res) => {
 });
 
 app.use(errorHandler);
+
+process.once('SIGTERM', async () => {
+  schedulerService.stopAll();
+  await screenshotService.close();
+  await prisma.$disconnect();
+  process.exit(0);
+});
 
 screenshotService.init().then(async () => {
   await schedulerService.bootstrap();

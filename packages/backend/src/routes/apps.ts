@@ -1,10 +1,9 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { PrismaClient } from '@prisma/client';
 import { schedulerService } from '../services/scheduler.service';
+import { prisma } from '../lib/prisma';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 const createAppSchema = z.object({
   name: z.string().min(1).max(120),

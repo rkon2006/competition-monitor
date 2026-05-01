@@ -1,15 +1,13 @@
-import { Router } from 'express';
+import { Router, Request } from 'express';
 import { createReadStream, existsSync } from 'fs';
 import path from 'path';
-import { PrismaClient } from '@prisma/client';
 import { config } from '../config';
-
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 
 // /api/apps/:appId/screenshots
 export const appScreenshotsRouter = Router({ mergeParams: true });
 
-appScreenshotsRouter.get('/', async (req, res, next) => {
+appScreenshotsRouter.get('/', async (req: Request<{ appId: string }>, res, next) => {
   try {
     const { appId } = req.params;
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
