@@ -9,10 +9,14 @@ const EXECUTABLE_PATH =
   process.env.PUPPETEER_EXECUTABLE_PATH ||
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
+const USER_AGENT =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+
 const LAUNCH_ARGS = [
   '--no-sandbox',
   '--disable-setuid-sandbox',
   '--disable-dev-shm-usage',
+  '--disable-blink-features=AutomationControlled',
   '--lang=en-US,en',
 ];
 
@@ -60,6 +64,7 @@ class ScreenshotService {
 
     try {
       await page.setViewport({ width: 1280, height: 900 });
+      await page.setUserAgent(USER_AGENT);
       await page.setExtraHTTPHeaders({ 'Accept-Language': 'en-US,en;q=0.9' });
 
       await page.goto(app.playUrl, {
@@ -67,7 +72,7 @@ class ScreenshotService {
         timeout: 30000,
       });
 
-      await page.waitForSelector('[itemprop="name"]', { timeout: 10000 });
+      await page.waitForSelector('[itemprop="name"]', { timeout: 10000 }).catch(() => {});
 
       try {
         const consentBtn = await page.$('button[aria-label*="Accept"]');
