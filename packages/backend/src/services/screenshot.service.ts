@@ -9,6 +9,13 @@ const EXECUTABLE_PATH =
   process.env.PUPPETEER_EXECUTABLE_PATH ||
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
+const LAUNCH_ARGS = [
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+  '--disable-dev-shm-usage',
+  '--lang=en-US,en',
+];
+
 class ScreenshotService {
   private browser: Browser | null = null;
 
@@ -16,14 +23,13 @@ class ScreenshotService {
     this.browser = await puppeteer.launch({
       executablePath: EXECUTABLE_PATH,
       headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--lang=en-US,en',
-      ],
+      args: LAUNCH_ARGS,
     });
-    console.log(`Browser initialized (executable: ${EXECUTABLE_PATH})`);
+    this.browser.once('disconnected', () => {
+      console.warn('[browser] Disconnected unexpectedly, will reinitialize on next capture');
+      this.browser = null;
+    });
+    console.log(`[browser] Initialized (executable: ${EXECUTABLE_PATH})`);
   }
 
   async close(): Promise<void> {
@@ -33,10 +39,17 @@ class ScreenshotService {
     }
   }
 
-  async capture(app: App): Promise<void> {
-    if (!this.browser) throw new Error('Browser not initialized');
+  private async ensureBrowser(): Promise<Browser> {
+    if (this.browser?.isConnected()) return this.browser;
 
-    const page = await this.browser.newPage();
+    console.warn('[browser] Not connected, reinitializing...');
+    await this.init();
+    return this.browser!;
+  }
+
+  async capture(app: App): Promise<void> {
+    const browser = await this.ensureBrowser();
+    const page = await browser.newPage();
 
     try {
       await page.setViewport({ width: 1280, height: 900 });
@@ -72,7 +85,7 @@ class ScreenshotService {
         data: { appId: app.id, filePath },
       });
     } catch (err) {
-      console.error(`Screenshot failed for app ${app.id}:`, err);
+      console.error(`[browser] Screenshot failed for app ${app.id}:`, err);
     } finally {
       await page.close();
     }
