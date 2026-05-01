@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/client';
-import { AppCard } from '../components/AppCard';
+import AppCard from '../components/AppCard';
 
-export function AppListPage() {
+export default function AppListPage() {
   const queryClient = useQueryClient();
   const [name, setName] = useState('');
   const [playUrl, setPlayUrl] = useState('');
@@ -79,13 +79,7 @@ export function AppListPage() {
           No apps yet. Add your first competitor above.
         </div>
       )}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 16,
-        }}
-      >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {apps?.map((app) => (
           <AppCard key={app.id} app={app} />
         ))}

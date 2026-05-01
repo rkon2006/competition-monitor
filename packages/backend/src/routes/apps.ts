@@ -14,7 +14,7 @@ const createAppSchema = z.object({
     .refine((url) => url.includes('play.google.com/store/apps/details'), {
       message: 'Must be a valid Google Play Store URL',
     }),
-  interval_min: z.number().int().min(5).max(1440).optional().default(60),
+
 });
 
 const updateAppSchema = z.object({
@@ -38,7 +38,6 @@ router.post('/', async (req, res, next) => {
         name: body.name,
         playUrl: body.play_url,
         packageName,
-        intervalMin: body.interval_min,
       },
     });
 
