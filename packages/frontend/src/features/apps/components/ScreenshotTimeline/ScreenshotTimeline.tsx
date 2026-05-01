@@ -12,12 +12,13 @@ export function ScreenshotTimeline({ appId }: Props) {
   const { data, isLoading } = useQuery({
     queryKey: ['screenshots', appId, page],
     queryFn: () => api.screenshots.list(appId, page),
-    refetchInterval: 30_000,
   });
 
   if (isLoading) return <div>Loading...</div>;
   if (!data || data.data.length === 0)
-    return <div style={{ color: '#888', padding: 32, textAlign: 'center' }}>No screenshots yet.</div>;
+    return (
+      <div style={{ color: '#888', padding: 32, textAlign: 'center' }}>No screenshots yet.</div>
+    );
 
   return (
     <div>
@@ -39,12 +40,24 @@ export function ScreenshotTimeline({ appId }: Props) {
       ))}
 
       {data.totalPages > 1 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'center', padding: 16 }}>
-          <button onClick={() => setPage((p) => p - 1)} disabled={page === 1}>← Previous</button>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            justifyContent: 'center',
+            padding: 16,
+          }}
+        >
+          <button onClick={() => setPage((p) => p - 1)} disabled={page === 1}>
+            ← Previous
+          </button>
           <span style={{ fontSize: 13, color: '#555' }}>
             Page {page} of {data.totalPages} ({data.total} total)
           </span>
-          <button onClick={() => setPage((p) => p + 1)} disabled={page === data.totalPages}>Next →</button>
+          <button onClick={() => setPage((p) => p + 1)} disabled={page === data.totalPages}>
+            Next →
+          </button>
         </div>
       )}
     </div>
