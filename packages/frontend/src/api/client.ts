@@ -42,6 +42,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const api = {
   apps: {
     list: () => request<App[]>('/api/apps'),
+    get: (id: string) => request<App>(`/api/apps/${id}`),
     create: (body: { name: string; play_url: string }) =>
       request<App>('/api/apps', { method: 'POST', body: JSON.stringify(body) }),
     update: (id: string, body: { name?: string }) =>
