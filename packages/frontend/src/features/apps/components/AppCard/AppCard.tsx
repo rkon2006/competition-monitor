@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api, type App } from '../../../../api/client';
+import { api, type App } from '../../../../shared/api/client';
 import s from './AppCard.module.css';
-import common from '../../../../styles/common.module.css';
+import common from '../../../../shared/styles/common.module.css';
 
 interface Props {
   app: App;

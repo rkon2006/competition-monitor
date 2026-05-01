@@ -1,0 +1,12 @@
+.root {
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0;
+}
+
+.playLink {
+  font-size: 13px;
+  color: #007bff;
+}

@@ -1,5 +1,5 @@
 import s from './AddAppForm.module.css';
-import common from '../../../../styles/common.module.css';
+import common from '../../../../shared/styles/common.module.css';
 import { useAddAppForm } from './useAddAppForm';
 
 export function AddAppForm() {

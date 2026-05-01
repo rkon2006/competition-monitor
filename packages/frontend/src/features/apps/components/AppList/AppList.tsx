@@ -1,7 +1,7 @@
-import { type App } from '../../../../api/client';
+import { type App } from '../../../../shared/api/client';
 import { AppCard } from '../AppCard/AppCard';
 import s from './AppList.module.css';
-import common from '../../../../styles/common.module.css';
+import common from '../../../../shared/styles/common.module.css';
 
 interface Props {
   apps: App[];

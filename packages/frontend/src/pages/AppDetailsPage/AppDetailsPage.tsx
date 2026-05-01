@@ -1,19 +1,14 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '../../api/client';
-import ScreenshotTimeline from '../../components/ScreenshotTimeline';
+import { useAppDetails } from '../../features/apps/hooks/useAppDetails';
+import { AppHeader } from '../../features/apps/components/AppHeader/AppHeader';
+import { ScreenshotTimeline } from '../../features/apps/components/ScreenshotTimeline/ScreenshotTimeline';
 import s from './AppDetailsPage.module.css';
-import common from '../../styles/common.module.css';
+import common from '../../shared/styles/common.module.css';
 
 export function AppDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
-  const { data: app, isLoading } = useQuery({
-    queryKey: ['apps', id],
-    queryFn: () => api.apps.list().then((apps) => apps.find((a) => a.id === id) ?? null),
-    enabled: !!id,
-  });
+  const { app, isLoading } = useAppDetails(id);
 
   if (isLoading) return <div style={{ padding: 24 }}>Loading...</div>;
 
@@ -35,17 +30,7 @@ export function AppDetailsPage() {
         {app.name}
       </div>
 
-      <div className={s.header}>
-        <h1 className={s.headerTitle}>{app.name}</h1>
-        <div className={`${s.headerTitle} ${common.meta}`} style={{ marginTop: 4 }}>
-          {app.packageName} · {app._count.screenshots} screenshot
-          {app._count.screenshots !== 1 ? 's' : ''}
-        </div>
-        <a href={app.playUrl} target="_blank" rel="noreferrer" className={s.playLink}>
-          View on Google Play ↗
-        </a>
-      </div>
-
+      <AppHeader app={app} />
       <ScreenshotTimeline appId={app.id} />
     </div>
   );
