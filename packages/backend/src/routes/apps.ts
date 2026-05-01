@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
+import { schedulerService } from '../services/scheduler.service';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -41,6 +42,7 @@ router.post('/', async (req, res, next) => {
       },
     });
 
+    schedulerService.scheduleApp(app);
     res.status(201).json(app);
   } catch (err) {
     next(err);
@@ -90,6 +92,7 @@ router.patch('/:id', async (req, res, next) => {
 // DELETE /api/apps/:id
 router.delete('/:id', async (req, res, next) => {
   try {
+    schedulerService.unscheduleApp(req.params.id);
     await prisma.app.delete({ where: { id: req.params.id } });
     res.status(204).send();
   } catch (err) {
