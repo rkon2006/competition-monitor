@@ -1,4 +1,5 @@
 import express from 'express';
+import { createServer } from 'http';
 import cors from 'cors';
 import { config } from './config';
 import { prisma } from './lib/prisma';
@@ -10,6 +11,8 @@ import { screenshotService } from './services/screenshot.service';
 import { schedulerService } from './services/scheduler.service';
 
 const app = express();
+const server = createServer(app);
+
 app.use(cors({ origin: config.corsOrigin }));
 app.use(express.json());
 
@@ -31,16 +34,35 @@ app.get('/api/test', async (_req, res) => {
 
 app.use(errorHandler);
 
-process.once('SIGTERM', async () => {
-  schedulerService.stopAll();
-  await screenshotService.close();
-  await prisma.$disconnect();
-  process.exit(0);
-});
+async function shutdown(signal: string): Promise<void> {
+  console.log(`[shutdown] ${signal} received, shutting down gracefully`);
+
+  // Force exit if shutdown takes too long
+  const forceExit = setTimeout(() => {
+    console.error('[shutdown] Forced exit after timeout');
+    process.exit(1);
+  }, 10_000).unref();
+
+  try {
+    schedulerService.stopAll();
+    server.close();
+    await screenshotService.close();
+    await prisma.$disconnect();
+    clearTimeout(forceExit);
+    console.log('[shutdown] Clean exit');
+    process.exit(0);
+  } catch (err) {
+    console.error('[shutdown] Error during shutdown:', err);
+    process.exit(1);
+  }
+}
+
+process.once('SIGTERM', () => shutdown('SIGTERM'));
+process.once('SIGINT', () => shutdown('SIGINT'));
 
 screenshotService.init().then(async () => {
   await schedulerService.bootstrap();
-  app.listen(config.port, () => {
-    console.log(`Server running on port ${config.port}`);
+  server.listen(config.port, () => {
+    console.log(`[server] Running on port ${config.port}`);
   });
 });
