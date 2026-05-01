@@ -12,4 +12,5 @@ export const config = {
   databaseUrl: required('DATABASE_URL'),
   dataDir: process.env.DATA_DIR ?? './data',
   corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+  screenshotCron: process.env.SCREENSHOT_CRON ?? '0 * * * *',
 };

@@ -1,4 +1,5 @@
 import cron, { ScheduledTask } from 'node-cron';
+import { config } from '../config';
 import { screenshotService } from './screenshot.service';
 import { prisma } from '../lib/prisma';
 
@@ -16,7 +17,7 @@ class SchedulerService {
   scheduleApp(appId: string): void {
     this.unscheduleApp(appId);
 
-    const task = cron.schedule('0 * * * *', async () => {
+    const task = cron.schedule(config.screenshotCron, async () => {
       const app = await prisma.app.findUnique({ where: { id: appId } });
       if (!app) {
         console.warn(`[scheduler] App ${appId} no longer exists, skipping`);
