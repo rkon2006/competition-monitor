@@ -18,6 +18,7 @@ const LAUNCH_ARGS = [
 
 class ScreenshotService {
   private browser: Browser | null = null;
+  private initPromise: Promise<void> | null = null;
 
   async init(): Promise<void> {
     this.browser = await puppeteer.launch({
@@ -42,8 +43,14 @@ class ScreenshotService {
   private async ensureBrowser(): Promise<Browser> {
     if (this.browser?.isConnected()) return this.browser;
 
-    console.warn('[browser] Not connected, reinitializing...');
-    await this.init();
+    if (!this.initPromise) {
+      console.warn('[browser] Not connected, reinitializing...');
+      this.initPromise = this.init().finally(() => {
+        this.initPromise = null;
+      });
+    }
+
+    await this.initPromise;
     return this.browser!;
   }
 

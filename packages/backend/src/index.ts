@@ -23,12 +23,12 @@ app.use('/api/apps', appsRouter);
 app.use('/api/apps/:appId/screenshots', appScreenshotsRouter);
 app.use('/api/screenshots', screenshotsRouter);
 
-app.get('/api/test', async (_req, res) => {
+app.get('/api/health', async (_req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     res.json({ status: 'ok', db: 'ok' });
   } catch {
-    res.status(503).json({ status: 'ok', db: 'error' });
+    res.status(503).json({ status: 'error', db: 'error' });
   }
 });
 
@@ -45,7 +45,9 @@ async function shutdown(signal: string): Promise<void> {
 
   try {
     schedulerService.stopAll();
-    server.close();
+    await new Promise<void>((resolve, reject) =>
+      server.close((err) => (err ? reject(err) : resolve())),
+    );
     await screenshotService.close();
     await prisma.$disconnect();
     clearTimeout(forceExit);

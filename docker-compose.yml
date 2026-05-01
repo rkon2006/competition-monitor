@@ -29,8 +29,6 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       DATA_DIR: /app/data
       CORS_ORIGIN: http://localhost
-      SCREENSHOT_CONCURRENCY: ${SCREENSHOT_CONCURRENCY}
-      SCREENSHOT_TIMEOUT_MS: ${SCREENSHOT_TIMEOUT_MS}
     volumes:
       - screenshots:/app/data/screenshots
     ports:

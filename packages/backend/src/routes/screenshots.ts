@@ -24,10 +24,9 @@ appScreenshotsRouter.get('/', async (req: Request<{ appId: string }>, res, next)
       prisma.screenshot.count({ where: { appId } }),
     ]);
 
-    const data = screenshots.map(({ id, appId, filePath, takenAt }) => ({
+    const data = screenshots.map(({ id, appId, takenAt }) => ({
       id,
       appId,
-      filePath,
       takenAt,
       imageUrl: `/api/screenshots/${id}/image`,
     }));
